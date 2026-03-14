@@ -1,0 +1,147 @@
+# =========================
+
+# Global / OS files
+
+# =========================
+
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+
+# =========================
+
+# Environment Variables / Secrets
+
+# =========================
+
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+config/local.*
+
+# =========================
+
+# Node.js / React
+
+# =========================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+
+build/
+dist/
+out/
+.next/
+coverage/
+
+# Framework caches
+
+.cache/
+.vite/
+.parcel-cache/
+
+# =========================
+
+# Python
+
+# =========================
+
+**pycache**/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+
+venv/
+.venv/
+env/
+ENV/
+
+# Python packaging
+
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Testing & coverage
+
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Type checkers
+
+.mypy_cache/
+.pyre/
+.pytype/
+
+# Jupyter
+
+.ipynb_checkpoints
+
+# =========================
+
+# Docker
+
+# =========================
+
+docker-compose.override.yml
+*.pid
+*.cid
+*.log
+docker-data/
+
+# =========================
+
+# Database
+
+# =========================
+
+*.sqlite3
+*.db
+*.db-journal
+
+# =========================
+
+# IDE / Editor
+
+# =========================
+
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# =========================
+
+# Package Managers
+
+# =========================
+
+.pnpm-store/
+.npm/
+
+# =========================
+
+# Misc
+
+# =========================
+
+tmp/
+temp/
+.cache-loader/
+.eslintcache
