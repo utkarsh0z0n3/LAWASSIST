@@ -6,21 +6,21 @@ from sentence_transformers import SentenceTransformer
 
 model = SentenceTransformer("BAAI/bge-small-en")
 
-index = faiss.read_index("../vectorstore/ipc_index.faiss")
+index = faiss.read_index("vectorstore/bns_index.faiss")
 
-with open("../vectorstore/metadata.json") as f:
+with open("vectorstore/metadata.json") as f:
     metadata = json.load(f)
 
 
-def retrieve(query):
+def retrieve(query, k=5):
 
     q = model.encode([query])
 
-    D, I = index.search(np.array(q), k=5)
+    D, I = index.search(np.array(q), k)
 
     results = []
 
     for idx in I[0]:
         results.append(metadata[idx])
 
-    return results
+    return resultss

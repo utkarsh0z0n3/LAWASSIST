@@ -13,18 +13,20 @@ def ask(question):
     prompt = f"""
 You are an Indian legal assistant.
 
-Use ONLY the provided context.
+Use ONLY the provided legal context.
 
 Context:
 {context}
 
 Question:
 {question}
+
+Cite sections.
 """
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role":"user","content":prompt}]
+        messages=[{"role": "user", "content": prompt}]
     )
 
     return response.choices[0].message.content

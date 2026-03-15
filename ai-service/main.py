@@ -1,12 +1,12 @@
-from fastapi imports FASTAPI
-from rag.ra_chain import ask
+from fastapi import FastAPI
+from rag import ask
 
-
-app = FASTAPI();
+app = FastAPI()
 
 
 @app.post("/ask")
-def query(q:str):
+def query(q: str):
 
-    answer  = ask(q);
-    return {"answer" : answer}
+    answer = ask(q)
+
+    return {"answer": answer}
