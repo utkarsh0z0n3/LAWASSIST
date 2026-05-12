@@ -1,114 +1,59 @@
-import faiss
-import json
-import numpy as np
-from sentence_transformers import SentenceTransformer
-from pathlib import Path
-import ollama
-
-INDEX_FOLDER = Path("../data/index")
-
-print("Loading embedding model...")
-model = SentenceTransformer("BAAI/bge-small-en")
-
-print("Loading FAISS index...")
-index = faiss.read_index(str(INDEX_FOLDER / "law_index.faiss"))
-
-with open(INDEX_FOLDER / "metadata.json") as f:
-    metadata = json.load(f)
-
-
-# -------------------------
-# Retrieve relevant laws
-# -------------------------
-
-def search_law(query, k=5):
-
-    query_embedding = model.encode([query])
-
-    D, I = index.search(np.array(query_embedding), k)
-
-    results = []
-
-    for idx in I[0]:
-        results.append(metadata[idx])
-
-    return results
-
-
-# -------------------------
-# Draft generator
-# -------------------------
-
-def generate_draft(case_details):
-
-    search_query = f"bail procedure {case_details['offence']} BNSS section bail"
-
-    chunks = search_law(search_query)
-
-    context = "\n\n".join(
-        [f"{c['act']} Section {c['section']}:\n{c['text']}" for c in chunks]
-    )
-
-    prompt = f"""
-You are an Indian legal drafting assistant.
-
-Use ONLY the legal context provided below.
-
-Do NOT reference CrPC or IPC unless they appear in the context.
-
-LEGAL CONTEXT
-{context}
-
-CASE DETAILS
-Client Name: {case_details['client_name']}
-Court: {case_details['court']}
-Offence: {case_details['offence']}
-Facts: {case_details['facts']}
-
-Draft a professional bail application using this format:
-
-IN THE COURT OF {case_details['court']}
-
-BAIL APPLICATION
-
-IN THE MATTER OF:
-State vs {case_details['client_name']}
-
-MOST RESPECTFULLY SHOWETH:
-
-1. Facts of the Case
-2. Legal Grounds
-3. Grounds for Bail
-
-PRAYER
-
-Wherefore it is respectfully prayed that this Hon'ble Court
-may grant bail to the applicant.
-
-Only use the law sections provided in the context.
 """
-    
-    response = ollama.chat(
-        model="deepseek-r1",
-        messages=[{"role": "user", "content": prompt}]
-    )
+CLI for bail drafting using the same deterministic template as the API.
 
+Optional: append retrieved statute excerpts (lazy-loads FAISS on demand).
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from drafting.bail_template import build_bail_draft, validate_bail_draft
+from llm.input_handler import create_user_data
+from rag.retriever import retrieve
+
+
+def _law_appendix(offence: str, facts: str, k: int = 3) -> str:
+    q = f"bail procedure {offence} BNSS bail {facts[:200]}"
+    chunks = retrieve(q, k=k)
+    lines = ["\n---\n", "Relevant excerpts (reference only; verify against current law):\n"]
+    for c in chunks:
+        lines.append(f"\n{c.get('act', '')} Section {c.get('section', '')}:\n{c.get('text', '')[:800]}\n")
+    return "\n".join(lines)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Bail draft (Indian court template, EN/HI)")
+    parser.add_argument(
+        "--with-law-excerpts",
+        action="store_true",
+        help="Append top-k retrieved statute snippets (loads embedding model + FAISS)",
+    )
+    args = parser.parse_args()
+
+    data = create_user_data()
+    text, lang = build_bail_draft(data)
+    issues = validate_bail_draft(
+        text,
+        lang,
+        expect_judicial_custody=data.in_judicial_custody,
+    )
+    if args.with_law_excerpts:
+        text = text + _law_appendix(data.offence, data.facts)
+
+    print(f"\nLanguage: {lang}\n")
+    if issues:
+        print("Checks:", ", ".join(issues))
     print("\n======= DRAFT =======\n")
-    print(response["message"]["content"])
+    print(text)
     print("\n=====================\n")
 
 
-# -------------------------
-# CLI input
-# -------------------------
-
 if __name__ == "__main__":
-
-    case_details = {
-        "client_name": input("Client name: "),
-        "court": input("Court: "),
-        "offence": input("Offence: "),
-        "facts": input("Case facts: ")
-    }
-
-    generate_draft(case_details)
+    main()

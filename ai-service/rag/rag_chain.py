@@ -1,4 +1,4 @@
-from retriever import retrieve
+from .retriever import retrieve
 from openai import OpenAI
 
 client = OpenAI()
