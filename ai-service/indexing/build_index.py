@@ -11,7 +11,7 @@ INDEX_FOLDER.mkdir(exist_ok=True)
 
 print("Loading embedding model...")
 
-model = SentenceTransformer("BAAI/bge-small-en")
+model = SentenceTransformer("intfloat/multilingual-e5-base")
 
 all_chunks = []
 texts = []
@@ -32,11 +32,7 @@ for file in CHUNK_FOLDER.glob("*chunks.json"):
 
 print("Creating embeddings...")
 
-embeddings = model.encode(
-    texts,
-    convert_to_numpy=True,
-    show_progress_bar=True
-)
+embeddings = model.encode([f"passage: {t}" for t in texts])
 
 dimension = embeddings.shape[1]
 
