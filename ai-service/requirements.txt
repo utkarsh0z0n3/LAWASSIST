@@ -1,3 +1,14 @@
+# API
 fastapi>=0.110
 uvicorn[standard]>=0.27
 pydantic>=2.6
+python-dotenv>=1.0
+
+# RAG (/ask) + optional law excerpts in drafting CLI
+openai>=1.30
+faiss-cpu>=1.8.0
+numpy>=1.26
+sentence-transformers>=2.6
+
+# Bail auto language (optional; falls back to English if missing)
+langdetect>=1.0.9

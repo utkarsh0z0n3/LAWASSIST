@@ -1,0 +1,17 @@
+[
+  {
+    "id": "bnss-bail-overview",
+    "question": "What does the Bharatiya Nagarik Suraksha Sanhita, 2023 say about bail in general terms?",
+    "answer": "[Placeholder] Run POST /ask with this question after setting OPENAI_API_KEY and building data/index. Expect citations to BNSS 2023 sections on regular bail, arrest, and custody where applicable."
+  },
+  {
+    "id": "bns-cheating-elements",
+    "question": "Under BNS 2023, what are the main ingredients of cheating?",
+    "answer": "[Placeholder] Expect answer grounded in BNS provisions retrieved from the index, with section numbers and short paraphrase only."
+  },
+  {
+    "id": "bsa-admissibility",
+    "question": "What is electronic evidence under the Bharatiya Sakshya Adhiniyam, 2023?",
+    "answer": "[Placeholder] Expect BSA 2023 sections on electronic records and admissibility as returned by the RAG pipeline."
+  }
+]

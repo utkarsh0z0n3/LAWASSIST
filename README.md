@@ -181,25 +181,45 @@ Legal text is chunked by Section boundaries, not by token count. Each chunk pres
 
 ## Setup
 
+### Environment
+
+1. At the **repository root**, copy `.env.example` to `.env` and set at least `OPENAI_API_KEY` for RAG (`POST /ask`).
+2. Optional: `LAWASSIST_API_BASE` (default `http://127.0.0.1:8000` for the Streamlit UI), `OPENAI_BASE_URL`, `LAWASSIST_OPENAI_MODEL`.
+
+### API (FastAPI)
+
 ```bash
-# 1. Clone the repo
-git clone https://github.com/utkarsh0z0n3/LAWASSIST.git
-cd LAWASSIST
-
-# 2. Install dependencies
+cd LAWASSIST/ai-service
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+pip install -r requirements-dev.txt   # optional: pytest
 
-# 3. Install Ollama and pull models
-ollama pull deepseek-r1
-ollama pull mixtral
-ollama pull aya
-
-# 4. Build the indexes (first time only)
+# Build indexes when needed (from ai-service)
 python indexing/build_index.py
 python indexing/build_index_hi.py
 
-# 5. Run
-python main.py
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+Sample prompts and bail JSON: [ai-service/examples/](ai-service/examples/).
+
+### Streamlit UI
+
+```bash
+cd LAWASSIST/frontend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+streamlit run streamlit_app.py --server.port 8501
+```
+
+Run the API in one terminal and Streamlit in another. The UI calls the API over HTTP (no CORS needed for this setup).
+
+### Optional: Ollama (other local flows)
+
+```bash
+ollama pull deepseek-r1
+ollama pull mixtral
+ollama pull aya
 ```
 
 ---

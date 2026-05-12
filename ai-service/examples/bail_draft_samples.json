@@ -1,0 +1,28 @@
+[
+  {
+    "notes": "English bail template test",
+    "request": {
+      "client_name": "Synthetic Applicant",
+      "court": "Chief Judicial Magistrate, Test District",
+      "offence": "cheating (illustrative label only)",
+      "facts": "Illustrative facts for local testing. Not a real case.",
+      "language": "en",
+      "in_judicial_custody": true,
+      "date_line": "",
+      "place_line": "Test City"
+    }
+  },
+  {
+    "notes": "Hindi bail template test",
+    "request": {
+      "client_name": "परीक्षण आवेदक",
+      "court": "मुख्य न्यायिक मजिस्ट्रेट, परीक्षण जिला",
+      "offence": "धोखाधड़ी",
+      "facts": "यह केवल सॉफ्टवेयर परीक्षण हेतु नमूना पाठ है। वास्तविक मामला नहीं।",
+      "language": "hi",
+      "in_judicial_custody": true,
+      "date_line": "",
+      "place_line": "परीक्षण"
+    }
+  }
+]
