@@ -17,12 +17,21 @@ _svc_root = Path(__file__).resolve().parent
 if str(_svc_root) not in sys.path:
     sys.path.insert(0, str(_svc_root))
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
-
 from drafting.bail_template import build_bail_draft, validate_bail_draft
 from drafting.schemas import BailDraftInput
 
-app = FastAPI(title="LAWASSIST AI Service")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load model + index at startup so first request doesn't hang
+    from rag.retriever import _load_store
+    _load_store()
+    yield
+
+
+app = FastAPI(title="LAWASSIST AI Service", lifespan=lifespan)
 
 
 class AskBody(BaseModel):
@@ -37,7 +46,6 @@ def health():
 @app.post("/ask")
 def query(body: AskBody):
     from rag import ask as rag_ask
-
     return {"answer": rag_ask(body.q)}
 
 
